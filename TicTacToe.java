@@ -1,92 +1,70 @@
 import java.util.Scanner;
 
 public class TicTacToe {
-    private static char[][] board = new char[3][3];
-    private static char currentPlayer = 'X';
+    private Player player1;
+    private Player player2;
+    private Player currentPlayer;
+    private Board board;
 
-    public static void main(String[] args) {
-        initializeBoard();
-        printBoard();
+    public TicTacToe() {
+        player1 = new Player('X');
+        player2 = new Player('O');
+        currentPlayer = player1;
+        board = new Board();
+    }
 
-        while (true) {
-            playerMove();
-            printBoard();
-            if (isWinner()) {
-                System.out.println("Spieler " + currentPlayer + " hat gewonnen!");
-                break;
-            }
-            if (isBoardFull()) {
-                System.out.println("Das Spiel ist unentschieden!");
-                break;
-            }
-            switchPlayer();
+    public void start() {
+        board.clear();
+        currentPlayer = player1;
+        System.out.println("Game started.");
+    }
+
+    public void switchCurrentPlayer() {
+        if (currentPlayer == player1) {
+            currentPlayer = player2;
+        } else {
+            currentPlayer = player1;
         }
     }
 
-    private static void initializeBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = '-';
-            }
-        }
-    }
-
-    private static void printBoard() {
-        System.out.println("-------------");
-        for (int i = 0; i < 3; i++) {
-            System.out.print("| ");
-            for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " | ");
-            }
-            System.out.println();
-            System.out.println("-------------");
-        }
-    }
-
-    private static void playerMove() {
-        Scanner scanner = new Scanner(System.in);
-        int row, col;
-        while (true) {
-            System.out.println("Spieler " + currentPlayer + ", geben Sie eine Zeile (1-3) und eine Spalte (1-3) ein: ");
-            row = scanner.nextInt() - 1;
-            col = scanner.nextInt() - 1;
-            if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == '-') {
-                board[row][col] = currentPlayer;
-                break;
-            } else {
-                System.out.println("Diese Position ist ungültig. Versuchen Sie es erneut.");
-            }
-        }
-    }
-
-    private static void switchPlayer() {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-    }
-
-    private static boolean isWinner() {
-        // Zeilen und Spalten prüfen
-        for (int i = 0; i < 3; i++) {
-            if ((board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) ||
-                    (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer)) {
-                return true;
-            }
-        }
-        // Diagonalen prüfen
-        if ((board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) ||
-                (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer)) {
-            return true;
-        }
+    public boolean hasWinner() {
+        // Implement win-checking logic
         return false;
     }
 
-    private static boolean isBoardFull() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == '-') {
-                    return false;
+    public void play() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            board.print(currentPlayer.getMarker());
+            System.out.print("row (0-2): ");
+            int row = scanner.nextInt();
+            System.out.print("column (0-2): ");
+            int col = scanner.nextInt();
+
+            if (board.isCellEmpty(row, col)) {
+                board.place(row, col, currentPlayer.getMarker());
+                if (hasWinner()) {
+                    board.print(currentPlayer.getMarker());
+                    System.out.println("Player " + currentPlayer.getMarker() + " wins!");
+                    break;
+                } else if (board.isFull()) {
+                    board.print(currentPlayer.getMarker());
+                    System.out.println("The game is a draw!");
+                    break;
                 }
+                switchCurrentPlayer();
+            } else {
+                System.out.println("Cell is not empty. Try again.");
             }
         }
-        return true;
+
+        scanner.close();
+    }
+
+    public static void main(String[] args) {
+        TicTacToe game = new TicTacToe();
+        game.start();
+        game.play();
     }
 }

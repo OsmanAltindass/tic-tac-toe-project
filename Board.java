@@ -35,13 +35,19 @@ public class Board {
         }
     }
 
-    public void print() {
-        System.out.println("Current board state:");
+    public void print(char currentPlayer) {
+        System.out.println("Current Player: " + currentPlayer);
+        System.out.println("▁▁▁▁▁▁▁");
         for (int i = 0; i < 3; i++) {
+            System.out.print("|");
             for (int j = 0; j < 3; j++) {
-                System.out.print(cells[i][j] + " ");
+                System.out.print(cells[i][j] == ' ' ? " " : cells[i][j]);
+                System.out.print("|");
             }
             System.out.println();
         }
+        System.out.println("▔▔▔▔▔▔▔");
+
+
     }
 }
